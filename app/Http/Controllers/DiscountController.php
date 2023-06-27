@@ -151,7 +151,9 @@ class DiscountController extends Controller
             $discount->end_date = $request->get('dis_end');
             $discount->discount_type = $request->get('dis_type');
             $discount->discount_value = $request->get('dis_price');
+            $discount->buy_qty = $request->get('dis_buy_qty');
             $discount->discount_map = $request->get('dis_map');
+            $discount->sequence = $request->get('dis_seq');
             $discount->map_category_id = $request->get('dis_cat');
             $discount->created_at = date('Y-m-d H:i:s');
             $discount->save();
@@ -216,8 +218,10 @@ class DiscountController extends Controller
             $discount->end_date = $request->get('dis_end');
             $discount->discount_type = $request->get('dis_type');
             $discount->discount_value = $request->get('dis_price');
+            $discount->buy_qty = $request->get('dis_buy_qty');
             $discount->discount_map = $request->get('dis_map');
             $discount->map_category_id = $request->get('dis_cat');
+            $discount->sequence = $request->get('dis_seq');
             $discount->updated_at = date('Y-m-d H:i:s');
             $discount->save();
 

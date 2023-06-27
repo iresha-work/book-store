@@ -32,6 +32,11 @@
                                     </div>
 
                                     <div class="form-group mt-2">
+                                        <label for="dis_seq">Sequence No</label>
+                                        <input required type="text" class="form-control" id="dis_seq" name="dis_seq" placeholder="Enter Sequence No">
+                                    </div>
+
+                                    <div class="form-group mt-2">
                                         <label for="dis_type">Discount Type</label>
                                         <select name="dis_type" class="form-control" required id="dis_type">
                                         <option value="">Choose Type</option>
@@ -57,6 +62,11 @@
                                                 <option value="{{$categoryob->id}}">{{$categoryob->name}}</option>
                                             @endforeach
                                         </select>
+                                    </div>
+
+                                    <div class="form-group mt-2">
+                                        <label for="dis_buy_qty">Qty</label>
+                                        <input required type="text" class="form-control" id="dis_buy_qty" name="dis_buy_qty" placeholder="Qty">
                                     </div>
 
                                     <div class="form-group mt-2">
@@ -175,6 +185,15 @@
                     number: true,
                     max: isMaxCheckDiscount
                 },
+
+                dis_buy_qty:{
+                    required: true,
+                    number: true,
+                },
+                dis_seq: {
+                    required: true,
+                    digits: true
+                },
             },
             messages: {
                 dis_code: {
@@ -192,6 +211,10 @@
 
                 dis_price: {
                     required: "Discount Value Required",
+                },
+
+                dis_buy_qty: {
+                    required: "Qty Required",
                 },
             },
             submitHandler: function(form) {
@@ -260,6 +283,15 @@
                     number: true,
                     max: isMaxCheckDiscount
                 },
+
+                dis_buy_qty:{
+                    required: true,
+                    number: true,
+                },
+                dis_seq: {
+                    required: true,
+                    digits: true
+                },
             },
             messages: {
                 dis_code: {
@@ -277,6 +309,10 @@
 
                 dis_price: {
                     required: "Discount Value Required",
+                },
+
+                dis_buy_qty: {
+                    required: "Qty Required",
                 },
             },
             submitHandler: function(form) {

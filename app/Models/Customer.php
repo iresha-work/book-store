@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Book extends Model
+class Customer extends Model
 {
     use HasFactory , SoftDeletes;
 
@@ -15,13 +15,5 @@ class Book extends Model
      *
      * @var string
      */
-    protected $table = 'book';
-
-    /**
-     * Get the book category relate.
-     */
-    public function category()
-    {
-        return $this->belongsTo(BookCategory::class,'category_id' , 'id');
-    }
+    protected $table = 'customer';
 }

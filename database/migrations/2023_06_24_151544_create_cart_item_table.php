@@ -16,7 +16,6 @@ return new class extends Migration
             $table->unsignedBigInteger('cart_id');
             $table->unsignedBigInteger('book_id');
             $table->unsignedBigInteger('discount_id')->nullable();
-            $table->unsignedBigInteger('copun_id')->nullable();
             $table->integer('qty');
             $table->softDeletes();
             $table->timestamps();
@@ -24,7 +23,6 @@ return new class extends Migration
             $table->foreign('book_id')->references('id')->on('book');
             $table->foreign('cart_id')->references('id')->on('cart');
             $table->foreign('discount_id')->references('id')->on('discount_type');
-            $table->foreign('copun_id')->references('id')->on('cupon_type');
         });
     }
 

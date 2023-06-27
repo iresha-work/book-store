@@ -346,6 +346,22 @@ class BookController extends Controller
     }
 
     /**
+     * Get the specified resource from storage.
+     */
+    public function bookList(Request $request)
+    {
+        return Book::where(function($query) use ($request) {
+            if(!empty($request->get('cpid'))){
+                $query->where('category_id',$request->get('cpid'));
+            }
+
+            if(!empty($request->get('q'))){
+                $query->where('name','like', '%' .$request->get('q'). '%');
+            }
+        })->get();
+    }
+
+    /**
      * Get custom attributes for validator errors.
      *
      * @return array<string, string>

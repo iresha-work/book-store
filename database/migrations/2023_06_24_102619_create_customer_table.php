@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('email')->unique();
+            $table->string('email');
+            $table->text('billing_address')->nullable();
             $table->string('contact_no');
-            $table->string('password');
             $table->timestamps();
             $table->softDeletes();
         });

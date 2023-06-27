@@ -14,15 +14,16 @@ return new class extends Migration
         Schema::create('order', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('customer_id');
-            $table->unsignedBigInteger('customer_has_address_id');
             $table->unsignedBigInteger('cart_id');
             $table->string('session_id');
+            $table->unsignedBigInteger('copun_id')->nullable();
+            $table->decimal('copun_val', $precision = 8, $scale = 2)->default('0.00');
             $table->softDeletes();
             $table->timestamps();
-
+            
             $table->foreign('customer_id')->references('id')->on('customer');
-            $table->foreign('customer_has_address_id')->references('id')->on('customer_has_address');
             $table->foreign('cart_id')->references('id')->on('cart');
+            $table->foreign('copun_id')->references('id')->on('cupon_type');
         });
     }
 

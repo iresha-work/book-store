@@ -5,6 +5,8 @@ use App\Http\Controllers\BookCategoryController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\OrderController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,12 +18,13 @@ use App\Http\Controllers\DiscountController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/', [App\Http\Controllers\FrontController::class, 'index'])->name('home');
+Route::get('/book-detail/{name}', [App\Http\Controllers\FrontController::class, 'bookDetail'])->name('detail');
+Route::post('/add-to/cart', [App\Http\Controllers\FrontController::class, 'addToCart'])->name('addtocart');
+Route::post('/get/cart/qty', [App\Http\Controllers\FrontController::class, 'getCartQty'])->name('getcartqty');
+Route::get('/get/cart', [App\Http\Controllers\FrontController::class, 'getCart'])->name('getcart');
+Route::get('/get/cart/ajax', [App\Http\Controllers\FrontController::class, 'getCartAjax'])->name('getcartajax');
+Route::post('/place/order', [App\Http\Controllers\FrontController::class, 'placeOrder'])->name('placeorder');
 
 Route::group(['prefix' => 'admin'], function(){
     Auth::routes();
@@ -64,4 +67,11 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::post('/discount-update-ajax', [App\Http\Controllers\DiscountController::class, 'update'])->name('discount.update.ajax');
     Route::post('/discount-delete-ajax', [App\Http\Controllers\DiscountController::class, 'destroy'])->name('discount.delete.ajax');
     // end coupn routes
+
+    // orders routes
+    Route::get('/orders', [App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders-list-ajax', [App\Http\Controllers\OrderController::class, 'create'])->name('orders.list.ajax');
+    Route::get('/orders/detail/{id}', [App\Http\Controllers\OrderController::class, 'orderDetail'])->name('order.detail.page');
+    
+    // end orders routes
 });

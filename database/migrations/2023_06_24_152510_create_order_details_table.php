@@ -16,15 +16,15 @@ return new class extends Migration
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('book_id');
             $table->unsignedBigInteger('discount_id')->nullable();
-            $table->unsignedBigInteger('copun_id')->nullable();
             $table->integer('qty');
+            $table->decimal('price', $precision = 8, $scale = 2)->default('0.00');
+            $table->decimal('discountval', $precision = 8, $scale = 2)->default('0.00');
             $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('order');
             $table->foreign('book_id')->references('id')->on('book');
             $table->foreign('discount_id')->references('id')->on('discount_type');
-            $table->foreign('copun_id')->references('id')->on('cupon_type');
         });
     }
 
