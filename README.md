@@ -64,3 +64,31 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Run to local environment
+clone the public repository https://github.com/iresha-work/book-store
+
+navigate to the project root folder using cmd or terminal and run [composer update]
+
+install node modules using npm [npm instal]
+
+build node module [npm run build]
+
+rename .env.exmple file as .env and set APP_NAME,APP_URL & mysql connection
+
+run [php artisan config:cache]
+
+run set for new app key [php artisan key:generate]
+
+run [php artisan config:cache] for new configrations set
+
+run [php artisan migrate] for create database tables
+
+run [php artisan db:seed --class=UserSeeder] for create system admin
+
+default user name  - admin@exmple.com
+password - password
+
+back end url - http://localhost/book-store/public/admin/login
+
+front end - http://localhost/book-store/public
