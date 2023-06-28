@@ -90,7 +90,7 @@ class DiscountController extends Controller
                 $query->orWhere($col,'like', '%' .$searchValue . '%');
             }
         }
-        })->select('*')
+        })
         ->skip($start)
         ->take($rowperpage)
         ->orderby($ar_search_cols[$columnIndex] , $columnSortOrder)

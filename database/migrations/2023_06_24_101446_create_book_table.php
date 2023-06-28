@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->json('images')->default(new Expression('(JSON_ARRAY())'));
             $table->decimal('price', $precision = 8, $scale = 2);
-            $table->integer('sequence',6)->default(1);
+            $table->integer('sequence')->default('1');
             $table->timestamps();
             $table->softDeletes();
 

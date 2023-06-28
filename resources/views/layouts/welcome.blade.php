@@ -106,14 +106,14 @@
                   <div class="col">
                     <div class="form-outline">
                       <label class="form-label" for="fname">First Name</label>
-                      <input type="text" id="fname" name="fname" class="form-control" />
+                      <input  type="text" id="fname" name="fname" class="form-control" />
                       
                     </div>
                   </div>
                   <div class="col">
                     <div class="form-outline">
                       <label class="form-label" for="lname">Last Name</label>
-                      <input type="text" id="lname" name="lname" class="form-control" />
+                      <input  type="text" id="lname" name="lname" class="form-control" />
                     </div>
                   </div>
                 </div>
@@ -122,14 +122,14 @@
                 <div class="form-outline mb-4">
                   
                   <label class="form-label" for="cemail">Email</label>
-                  <input type="email" id="cemail" name="cemail" class="form-control" />
+                  <input  type="email" id="cemail" name="cemail" class="form-control" />
                 </div>
 
                 <!-- Number input -->
                 <div class="form-outline mb-4">
                   
                   <label class="form-label" for="cmob">Phone</label>
-                  <input type="text" id="cmob" name="cmob" class="form-control" />
+                  <input  type="text" id="cmob" name="cmob" class="form-control" />
                 </div>
 
                 <!-- Message input -->
@@ -263,6 +263,7 @@ function getCartQty(){
     });
 }
 
+
 function submitOrder(){
     var is_cart_id = localStorage.getItem("cart_id");
     if(is_cart_id == null){
@@ -299,6 +300,45 @@ function submitOrder(){
         }
     });
 }
+
+function submitAddToCart(pid , cart_qty_update_id , upate_qty){
+        $("#btnAddCart").LoadingOverlay("show");
+        var cart_id = Math.random().toString(16).slice(2);
+        var is_cart_id = localStorage.getItem("cart_id");
+
+        if(is_cart_id == null){
+            localStorage.setItem("cart_id", cart_id);
+            is_cart_id = cart_id;
+        }
+
+        $.ajax({
+            method: "POST",
+            url: BASE_URL+"/add-to/cart",
+            data: {
+                pid : pid,
+                is_cart_id : is_cart_id,
+                cart_qty_update_id : cart_qty_update_id,
+                upate_qty : upate_qty
+            },
+            dataType: "json",
+            success: function(response){
+                if(response.status){
+                    showMessage('success' , response.title , 2000);
+                    getCartQty();
+                    if(cart_qty_update_id | (cart_qty_update_id == -1)){
+                        getCartAjax(1);
+                    }
+                }else{
+                    showMessage('error' , response.title , 4000);
+                }
+                $("#btnAddCart").LoadingOverlay("hide");
+            },
+            error: function(response){
+                showMessage('error' , response.responseJSON.message , 4000);
+                $("#btnAddCart").LoadingOverlay("hide");
+            }
+        });
+    }
 
 function closeModal(){
     $('#storeModal').modal('hide');

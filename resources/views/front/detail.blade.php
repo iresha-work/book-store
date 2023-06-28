@@ -39,44 +39,12 @@
         $(document).on("click","#btnAddCart",function() {
             var pid = $(this).data('pid');
             if(pid != ''){
-                submitAddToCart(pid);
+                submitAddToCart(pid ,0,0);
             }
         });
     });
     
-    function submitAddToCart(pid){
-        $("#btnAddCart").LoadingOverlay("show");
-        var cart_id = Math.random().toString(16).slice(2);
-        var is_cart_id = localStorage.getItem("cart_id");
-
-        if(is_cart_id == null){
-            localStorage.setItem("cart_id", cart_id);
-            is_cart_id = cart_id;
-        }
-
-        $.ajax({
-            method: "POST",
-            url: BASE_URL+"/add-to/cart",
-            data: {
-                pid : pid,
-                is_cart_id : is_cart_id
-            },
-            dataType: "json",
-            success: function(response){
-                if(response.status){
-                    showMessage('success' , response.title , 2000);
-                    getCartQty();
-                }else{
-                    showMessage('error' , response.title , 4000);
-                }
-                $("#btnAddCart").LoadingOverlay("hide");
-            },
-            error: function(response){
-                showMessage('error' , response.responseJSON.message , 4000);
-                $("#btnAddCart").LoadingOverlay("hide");
-            }
-        });
-    }
+    
 
     
 </script>

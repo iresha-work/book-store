@@ -18,12 +18,15 @@ return new class extends Migration
             $table->string('session_id');
             $table->unsignedBigInteger('copun_id')->nullable();
             $table->decimal('copun_val', $precision = 8, $scale = 2)->default('0.00');
+            $table->unsignedBigInteger('discount_id')->nullable();
+            $table->decimal('discount_val', $precision = 8, $scale = 2)->default('0.00');
             $table->softDeletes();
             $table->timestamps();
             
             $table->foreign('customer_id')->references('id')->on('customer');
             $table->foreign('cart_id')->references('id')->on('cart');
             $table->foreign('copun_id')->references('id')->on('cupon_type');
+            $table->foreign('discount_id')->references('id')->on('discount_type');
         });
     }
 

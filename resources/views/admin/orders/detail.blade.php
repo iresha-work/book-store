@@ -50,24 +50,14 @@ $amountBookAll = 0;
         <tbody>
             @forelse ($order_detail->items as $oditem)
             @php
-                $amountBook = $oditem->price;
-                if(isset($oditem->discount)){
-                    if($oditem->discount->discount_type == "percentage"){
-                        $amountBook = (($oditem->price * $oditem->qty ) * 
-                        (100 - $oditem->discount->discount_value) / 100);
-                    }else{
-                        $amountBook = (($oditem->price * $oditem->qty ) - $oditem->discount->discount_value);
-                    }
-                    
-                }
-                $netTotalBookAll += $amountBook;
+                $netTotalBookAll += (($oditem->price * $oditem->qty) - $oditem->discountval);
             @endphp
                 <tr>
                     <td>{{$oditem->book->name}}</td>
                     <td class="text-right">{{$oditem->qty}}</td>
                     <td class="text-right">{{number_format($oditem->price * $oditem->qty,2,".",",")}}</td>
-                    <td class="text-right">{{number_format(($oditem->price * $oditem->qty) - $amountBook,2,".",",")}}</td>
-                    <td class="text-right">{{number_format($amountBook,2,".",",")}}</td>
+                    <td class="text-right">{{number_format($oditem->discountval,2,".",",")}}</td>
+                    <td class="text-right">{{number_format(($oditem->price * $oditem->qty) - $oditem->discountval,2,".",",")}}</td>
                 </tr>
             @empty
             <div class="container">
@@ -98,21 +88,20 @@ $amountBookAll = 0;
             <th style="width:50%">Copun Code:</th>
             <td class="text-right">
             @if ($copcodet_detail)
-                @php
-                    if($copcodet_detail->cupon_type == "percentage"){
-                        $netTotalBookAll = ($netTotalBookAll * 
-                        (100 - $copcodet_detail->cupon_value) / 100);
-                    }else{
-                        $netTotalBookAll = ($netTotalBookAll - $copcodet_detail->cupon_value);
-                    }
-                @endphp
-                Code - {{$copcodet_detail->cupon_code .' | Applied Value - '.number_format($netTotalBookAll- $amountBookAll,2,".",",")}} LKR
+                Code - {{$copcodet_detail->cupon_code .' | Applied Value - '.number_format($order_detail->copun_val,2,".",",")}} LKR
+            @endif
+            </td>
+            </tr>
+            <th style="width:50%">Order Wise Discount:</th>
+            <td class="text-right">
+            @if ($copcodet_detail)
+                {{number_format($order_detail->discount_val,2,".",",")}} LKR
             @endif
             </td>
             </tr>
             <tr>
             <th>Total </th>
-            <td class="text-right">{{number_format($netTotalBookAll,2,".",",")}} LKR</td>
+            <td class="text-right">{{number_format(($netTotalBookAll - ($order_detail->discount_val + $order_detail->copun_val)),2,".",",")}} LKR</td>
             </tr>
         </table>
         </div>

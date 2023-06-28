@@ -1,7 +1,7 @@
 <div class="col-sm-12">
     <div class="card card-primary">
         <div class="card-header bg-info text-white">
-            <h5 class="card-title">{{ __('Edit / Delete Coupon') }}</h5>
+            <h5 class="card-title">{{ __('Edit / Delete Discount') }}</h5>
         </div>
 
         <form autocomplte="off" id="discount-edit-form" method="POST" >
@@ -47,7 +47,7 @@
                     </select>
                 </div>
 
-                <div class="form-group mt-2 d-none" id="catgory" >
+                <div class="form-group mt-2 {{$discount->discount_map == 'category_id' ? '' : 'd-none'}}" id="catgory" >
                     <label for="dis_cat">Choose Category</label>
                     <select name="dis_cat" class="form-control" id="dis_cat">
                         <option value="">Choose Category</option>

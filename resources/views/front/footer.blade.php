@@ -9,7 +9,7 @@
                 </div>
                 
             </div>
-            <div id="credit"><a href="#"> © iresha-sellehandie </a> &nbsp&nbsp&nbsp | &nbsp&nbsp&nbsp <a href="#/" target="_blank"> sample book cart </a></div>
+            <div id="credit"><a href="#"> <a href="#/" target="_blank"> {{ config('app.name', 'Laravel') }} </a></div>
         </section>
 
     </footer>

@@ -23,6 +23,19 @@ $(document).ready(function(){
     $(document).on("click","#submitCart",function() {
         $('#storeModal').modal('show');
     });
+
+    $(document).on("change",".qty-update",function() {
+        var bid = $(this).data('bid');
+        var pid = $(this).data('pid');
+        submitAddToCart(bid , pid , $(this).val());
+    });
+
+    $(document).on("click",".remove-itemcart",function() {
+        var bid = $(this).data('bid');
+        var pid = $(this).data('pid');
+        submitAddToCart(bid , pid , -1);
+    });
+
 });
 
 function getCartAjax(clrcop){
@@ -48,5 +61,6 @@ function getCartAjax(clrcop){
         }
     });
 }
+
 </script>
 @endpush

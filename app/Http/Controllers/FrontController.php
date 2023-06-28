@@ -77,47 +77,63 @@ class FrontController extends Controller
                 'session_id' => $request->get('is_cart_id')
             ])->first();
             
-            if(empty($cart)){
-                $newcart = new Cart;
-                $newcart->session_id = $request->get('is_cart_id');
-                $newcart->created_at = $up_time;
-                $newcart->save();
-                $newcart_id = $newcart->id;
-
-                $cart_item = new CartItem;   
-                $cart_item->cart_id = $newcart_id;
-                $cart_item->book_id = $request->get('pid');
-                $cart_item->qty = 1;
-                $cart_item->created_at = $up_time;
-                $cart_item->save();
-                $cart_item_id = $cart_item->id;
-
-            }else{
-                
-                $cart->created_at = $up_time;
-                $cart->save();
-
-                $cart_item = CartItem::where([
-                    'cart_id' => $cart->id,
-                    'book_id' => $request->get('pid'),
-                ])->first();
-
-                if(empty($cart_item)){
-                    $cart_itemnw = new CartItem;
-                    $cart_itemnw->qty = 1;
-                    $cart_itemnw->book_id = $request->get('pid');
-                    $cart_itemnw->cart_id = $cart->id;
-                    $cart_itemnw->updated_at = $up_time;
-                    $cart_itemnw->created_at = $up_time;
-                    $cart_itemnw->save();
-                    $cart_item_id = $cart_itemnw->id; 
-                }else{
-                    $cart_item->qty = ($cart_item->qty + 1);
-                    $cart_item->updated_at = $up_time;
+            if($request->get('cart_qty_update_id') == 0){
+                if(empty($cart)){
+                    $newcart = new Cart;
+                    $newcart->session_id = $request->get('is_cart_id');
+                    $newcart->created_at = $up_time;
+                    $newcart->save();
+                    $newcart_id = $newcart->id;
+    
+                    $cart_item = new CartItem;   
+                    $cart_item->cart_id = $newcart_id;
+                    $cart_item->book_id = $request->get('pid');
+                    $cart_item->qty = 1;
+                    $cart_item->created_at = $up_time;
                     $cart_item->save();
-                    $cart_item_id = $cart_item->id; 
+                    $cart_item_id = $cart_item->id;
+    
+                }else{
+                    
+                    $cart->created_at = $up_time;
+                    $cart->save();
+    
+                    $cart_item = CartItem::where([
+                        'cart_id' => $cart->id,
+                        'book_id' => $request->get('pid'),
+                    ])->first();
+    
+                    if(empty($cart_item)){
+                        $cart_itemnw = new CartItem;
+                        $cart_itemnw->qty = 1;
+                        $cart_itemnw->book_id = $request->get('pid');
+                        $cart_itemnw->cart_id = $cart->id;
+                        $cart_itemnw->updated_at = $up_time;
+                        $cart_itemnw->created_at = $up_time;
+                        $cart_itemnw->save();
+                        $cart_item_id = $cart_itemnw->id; 
+                    }else{
+                        $cart_item->qty = ($cart_item->qty + 1);
+                        $cart_item->updated_at = $up_time;
+                        $cart_item->save();
+                        $cart_item_id = $cart_item->id; 
+                    }
+                      
                 }
-                  
+            }else{
+
+                if($request->get('upate_qty') == -1){
+                    $cartitem = CartItem::find($request->get('cart_qty_update_id'));
+                    $cartitem->forceDelete();
+                }else{
+                    $cartitem = CartItem::find($request->get('cart_qty_update_id'));
+                    $cartitem->qty = intval($request->get('upate_qty'));
+                    $cartitem->updated_at = $up_time;
+                    $cartitem->discount_id = null;
+                    $cartitem->save();
+                    $cart_item_id = $cartitem->id; 
+                }
+                
             }
 
             $book = Book::find($request->get('pid'));
@@ -131,20 +147,23 @@ class FrontController extends Controller
                     $q->where('category_id', $category_id);
                 });
             })->first();
-
+            
             $all_aty = 0;
             if(!empty($cart_item_discount)){
                 $all_aty = $cart_item_discount->items->sum('qty');
             }
-            
+
             $discounts_categorywise = Discount::whereRaw('"'.$date_now.'" BETWEEN start_date AND end_date')
             ->select([
                 'id'
-            ])->where('buy_qty' , '<=',$all_aty)
-            ->where('map_category_id' , $category_id)
+            ])->where('buy_qty' , '<=', $all_aty)
+            ->where([
+                'map_category_id' => $category_id,
+                'discount_map' => 'category_id'
+            ])
             ->orderby('sequence' , 'desc')
             ->first();
-
+            
             if(!empty($discounts_categorywise)){
                 $cart_item_dis = CartItem::find($cart_item_id);
                 $cart_item_dis->discount_id = $discounts_categorywise->id;
@@ -152,7 +171,7 @@ class FrontController extends Controller
             }
 
             $response_ar['status'] = true;
-            $response_ar['title'] = "Item Added";
+            $response_ar['title'] = "Cart Update";
             return response()->json($response_ar);
 
         } catch (\Throwable $th) {
@@ -222,9 +241,24 @@ class FrontController extends Controller
             $cart_detail->save();
             $request->merge(["copcode" => null]);
         }
+
+        $all_aty = 0;
+        if(!empty($cart_detail)){
+            $all_aty = $cart_detail->items->sum('qty');
+        }
+
+        $order_discwise = Discount::whereRaw('"'.$date_now.'" BETWEEN start_date AND end_date')
+            ->where('buy_qty' , '<=',$all_aty)
+            ->where([
+                'discount_map' => 'all'
+            ])
+            ->orderby('sequence' , 'desc')
+            ->first();
+
         return view('front.cartdetail')->with([
             'url_base' => config('app.url'),
             'cart_detail' => $cart_detail,
+            'order_discwise' => $order_discwise,
             'copcode' => $request->get('copcode'),
             'copcodet_detail' => $copcodet_detail
         ]);
@@ -262,23 +296,11 @@ class FrontController extends Controller
             ])->with(['items'])->first();
 
             $copcodet_detail = false;
-            if(!empty($order->copun_id)){
-                $copcodet_detail = Coupon::find($order->copun_id)
+            if(!empty($cart_detail->copun_id)){
+                $copcodet_detail = Coupon::find($cart_detail->copun_id)
                 ->first();
             }
-
-            $amountBookRaw = 0;
-            $netTotalBookAll = 0;
-            dd($cart_detail->items);
-            if ($copcodet_detail){
-                if($copcodet_detail->cupon_type == "percentage"){
-                    $amountBookRaw = ($netTotalBookAll * 
-                    (100 - $copcodet_detail->cupon_value) / 100);
-                }else{
-                    $amountBookRaw = ($amountBookRaw - $copcodet_detail->cupon_value);
-                }
-            }
-
+            
             $customer = new Customer;
             $customer->first_name = $request->get('fname');
             $customer->last_name = $request->get('lname');
@@ -294,35 +316,80 @@ class FrontController extends Controller
             $order->cart_id = $cart_detail->id;
             $order->session_id = $cart_detail->session_id;
             $order->copun_id = $cart_detail->copun_id;
-            $order->copun_val = $amountBookRaw;
             $order->created_at = $date_now;
             $order->save();
             $orderid = $order->id;
 
-
-
             $ar_items = [];
+            $amountBookRaw = 0;
+            $amountTotal = 0;
             foreach ($cart_detail->items as $keym => $item) {
                 $discount_item = 0;
+                $amountTotal += ($item->book->price * $item->qty );
                 if(isset($item->discount)){
                     if($item->discount->discount_type == "percentage"){
                         $discount_item = (($item->book->price * $item->qty ) * 
                         (100 - $item->discount->discount_value) / 100);
+                        
                     }else{
                         $discount_item = (($item->book->price * $item->qty ) - $item->discount->discount_value);
                     }
-                    
+                    $amountBookRaw += (($item->book->price * $item->qty ) - $discount_item);
                 }
+
                 $ar_items[] = [
                     "order_id" => $orderid,
                     "book_id" => $item->book_id,
                     "discount_id" => $item->discount_id,
                     "qty" => $item->qty,
                     "price" => $item->book->price,
-                    "discountval" => $discount_item,
+                    "discountval" => $discount_item != 0 ? (($item->book->price * $item->qty) - $discount_item) : 0,
                     "created_at" => $date_now,
                 ];
             }
+            $all_aty = 0;
+            if(!empty($cart_detail)){
+                $all_aty = $cart_detail->items->sum('qty');
+            }
+
+            $date_cur = date('Y-m-d');
+            $order_discwise = Discount::whereRaw('"'.$date_cur.'" BETWEEN start_date AND end_date')
+                ->where('buy_qty' , '<=',$all_aty)
+                ->where([
+                    'discount_map' => 'all'
+                ])
+                ->orderby('sequence' , 'desc')
+                ->first();
+
+            $copun_val = ($amountTotal - $amountBookRaw);
+            if(!empty($order_discwise)){
+                $amountBook = 0;
+
+                if($order_discwise->discount_type == "percentage"){
+                    $amountBook = (($copun_val * $order_discwise->discount_value) / 100);
+                }else{
+                    $amountBook = $order_discwise->discount_value;
+                }
+
+                $copun_val = ($copun_val - $amountBook);
+                $order->discount_val = ($amountBook);
+                $order->discount_id = $order_discwise->id;
+                $order->save();
+            }
+            
+            $amountBookCop = 0;
+
+            if ($copcodet_detail){
+                if($copcodet_detail->cupon_type == "percentage"){
+                    $amountBookCop = ($copun_val * 
+                    (100 - $copcodet_detail->cupon_value) / 100);
+                }else{
+                    $amountBookCop = ($copun_val - $copcodet_detail->cupon_value);
+                }
+                $order->copun_val = ($copun_val - $amountBookCop);
+                $order->save();
+            }
+
             OrderItem::insert($ar_items);   
             DB::commit();
             $response_ar['status'] = true;
@@ -335,6 +402,19 @@ class FrontController extends Controller
             $response_ar['title'] = $th->getMessage();
             return response()->json($response_ar);
         }
+    }
+
+    
+    /**
+     * Display a listing of the resource.
+     */
+    public function updateCartQty(Request $request)
+    {
+        $date_now = date('Y-m-d');
+        $cartitem = CartItem::find($request->get('pid'));
+    
+        $cartitem->save();
+        
     }
 
     /**

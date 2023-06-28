@@ -11,9 +11,12 @@ $iscopun = 0;
         @forelse ($cart_detail->items as $cartitem)
         <div id="box">
             <img src="{{$url_base.'storage/app/public/'.json_decode($cartitem->book->images)[0]}}">
-            <h3><a target="_blank" class="text-info" href="{{url('book-detail/'.$cartitem->book->name.'?pid='.$cartitem->book->id)}}">{{$cartitem->book->name}}</a> × {{$cartitem->qty}}</h3>
+            <h3><a target="_blank" class="text-info" href="{{url('book-detail/'.$cartitem->book->name.'?pid='.$cartitem->book->id)}}">{{$cartitem->book->name}}</a> × 
+            <input  data-bid="{{$cartitem->book_id}}" type="number" style="width: 15% !important" min="1" data-pid="{{$cartitem->id}}" class="qty-update" value="{{$cartitem->qty}}">
+            <a class="text-danger pl-1 remove-itemcart" href="javascript:void(0)" data-bid="{{$cartitem->book_id}}" data-pid="{{$cartitem->id}}">x</a>
+        </h3>
             @php
-                $amountBook = $cartitem->book->price;
+                $amountBook = 0;
                 $discounthtml = 0;
                 if(isset($cartitem->discount)){
                     if($cartitem->discount->discount_type == "percentage"){
@@ -23,6 +26,8 @@ $iscopun = 0;
                         $amountBook = (($cartitem->book->price * $cartitem->qty ) - $cartitem->discount->discount_value);
                     }
                     $discounthtml = 1;
+                }else{
+                    $amountBook += (($cartitem->book->price * $cartitem->qty ));
                 }
                 $amountBookAll+= $amountBook;
             @endphp
@@ -45,6 +50,18 @@ $iscopun = 0;
         <div id="totalContainer">
         <div id="total">
             <h2>Total Amount</h2>
+            @if ($order_discwise)
+                @php
+                    if($order_discwise->discount_type == "percentage"){
+                        $amountBookAll = ($amountBookAll * 
+                        (100 - $order_discwise->discount_value) / 100);
+                    }else{
+                        $amountBookAll = ($amountBookAll - $order_discwise->discount_value);
+                    }
+                @endphp
+                <span class="badge btn-block badge-info mt-2 mb-2">{{$order_discwise->name}}</span>
+            @endif
+
             @if ($copcodet_detail)
                 @php
                     $iscopun = 1;
@@ -81,31 +98,3 @@ $iscopun = 0;
     </div>
 </div>
 @endif
-
-@push('head')
-<script>
-
-function placeOrderAjax(){
-    var is_cart_id = localStorage.getItem("cart_id");
-    if(is_cart_id == null){
-        is_cart_id = 0;
-    }
-    $('.cartMainContainerId').LoadingOverlay("show");
-    $.ajax({
-        method: "GET",
-        url: BASE_URL+"/get/cart/ajax",
-        data: {
-            is_cart_id : is_cart_id
-        },
-        dataType: "html",
-        success: function(response){
-            $('.cartMainContainerId').html(response);
-            $('.cartMainContainerId').LoadingOverlay("hide");
-        },
-        error: function(response){
-            $('.cartMainContainerId').LoadingOverlay("hide");
-        }
-    });
-}
-</script>
-@endpush

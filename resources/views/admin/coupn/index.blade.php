@@ -56,7 +56,7 @@
                     <div class="col-sm-7">
                         <div class="card card-primary">
                             <div class="card-header bg-primary text-white mb-2">
-                                <h5 class="card-title">{{ __('List Coupon Category') }}</h5>
+                                <h5 class="card-title">{{ __('List Coupon') }}</h5>
                             </div>
                             <table id="coupn-list" class="display" style="width:100%">
                                 <thead>

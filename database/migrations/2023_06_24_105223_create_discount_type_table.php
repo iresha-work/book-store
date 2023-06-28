@@ -21,9 +21,9 @@ return new class extends Migration
             $table->enum('discount_type', ['percentage', 'amount']);
             $table->decimal('discount_value', $precision = 8, $scale = 2);
             $table->enum('discount_map', ['category_id', 'item_id','all']);
-            $table->json('map_category_id')->default(new Expression('(JSON_ARRAY())'));
-            $table->integer('buy_qty',6)->default(1);
-            $table->integer('sequence',6)->default(1);
+            $table->integer('map_category_id')->nullable();
+            $table->integer('buy_qty')->default('1');
+            $table->integer('sequence')->default('1');;
             $table->timestamps();
             $table->softDeletes();
         });

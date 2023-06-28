@@ -26,6 +26,7 @@ Route::get('/get/cart', [App\Http\Controllers\FrontController::class, 'getCart']
 Route::get('/get/cart/ajax', [App\Http\Controllers\FrontController::class, 'getCartAjax'])->name('getcartajax');
 Route::post('/place/order', [App\Http\Controllers\FrontController::class, 'placeOrder'])->name('placeorder');
 
+
 Route::group(['prefix' => 'admin'], function(){
     Auth::routes();
 });

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('book_category', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('sequence',6)->default(1);
+            $table->integer('sequence')->default('1');
             $table->timestamps();
             $table->softDeletes();
         });
